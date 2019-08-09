@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"wg/internal/cli"
+	"wg/internal/meta"
 	"wg/internal/webgrep"
 )
 
@@ -18,6 +19,7 @@ var (
 	flagCaseSensitive = flag.Bool("case-sensitive", false, "respect search query case sensitivity")
 	flagFile          = flag.String("file", "", "filter matches by file path pattern")
 	flagMaxMatches    = flag.Int("max-matches", 50, "maximum number of matches in search results")
+	flagVersion       = flag.Bool("version", false, "print the application version and exit")
 	flagRepos         = cli.NewArrayFlag()
 	flagSearchType    = cli.NewChoicesFlag([]string{"files", "code"}, "code")
 )
@@ -26,15 +28,19 @@ func init() {
 	flag.Var(flagRepos, "repo", "filter matches by repository name")
 	flag.Var(flagSearchType, "search-type", "search results type to print; one of {files, code}")
 	flag.Parse()
-
-	/* Rudimentary input validation */
-
-	if *flagWebgrepURL == "" {
-		panic(fmt.Errorf("main: no value specified for webgrep instance URL"))
-	}
 }
 
 func main() {
+	if *flagVersion {
+		fmt.Printf("wg/%s\n", meta.Version)
+		return
+	}
+
+	// Rudimentary input validation
+	if *flagWebgrepURL == "" {
+		panic(fmt.Errorf("main: no value specified for webgrep instance URL"))
+	}
+
 	// Instantiate a webgrep client
 	client, err := webgrep.NewClient(*flagWebgrepURL)
 	if err != nil {

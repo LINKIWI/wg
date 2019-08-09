@@ -1,0 +1,56 @@
+package webgrep
+
+// CodeSearchResult formalizes fields for a single code search result.
+type CodeSearchResult struct {
+	Repo    string `json:"repo"`
+	Version string `json:"version"`
+	Path    string `json:"path"`
+	Lines   []struct {
+		Line   string `json:"line"`
+		Number int    `json:"number"`
+		Bounds []int  `json:"bounds"`
+	} `json:"lines"`
+}
+
+// FileSearchResult formalizes fields for a single file path result.
+type FileSearchResult struct {
+	Repo    string `json:"repo"`
+	Version string `json:"version"`
+	Path    string `json:"path"`
+	Bounds  []int  `json:"bounds"`
+}
+
+// SearchStats formalizes fields in server-side search statistics.
+type SearchStats struct {
+	ExitReason int `json:"exitReason"`
+	Time       int `json:"time"`
+}
+
+// SearchQueryRequest describes the top-level request for a search query.
+type SearchQueryRequest struct {
+	Query         string `json:"query"`
+	File          string `json:"file"`
+	Repo          string `json:"repo"`
+	Regex         bool   `json:"regex"`
+	CaseSensitive bool   `json:"caseSensitive"`
+	MaxMatches    int    `json:"maxMatches"`
+}
+
+// SearchQueryResponse describes the top-level reponse for a search query.
+type SearchQueryResponse struct {
+	Stats SearchStats        `json:"stats"`
+	Code  []CodeSearchResult `json:"code"`
+	Files []FileSearchResult `json:"files"`
+}
+
+// MetadataResponse describes the top-level response for a metadata request.
+type MetadataResponse struct {
+	Name         string `json:"name"`
+	Timestamp    string `json:"timestamp"`
+	Repositories []struct {
+		Name    string `json:"name"`
+		Version string `json:"version"`
+		URL     string `json:"url"`
+		Remote  string `json:"remote"`
+	} `json:"repositories"`
+}

@@ -28,12 +28,12 @@ type SearchStats struct {
 
 // SearchQueryRequest describes the top-level request for a search query.
 type SearchQueryRequest struct {
-	Query         string `json:"query"`
-	File          string `json:"file"`
-	Repo          string `json:"repo"`
-	Regex         bool   `json:"regex"`
-	CaseSensitive bool   `json:"caseSensitive"`
-	MaxMatches    int    `json:"maxMatches"`
+	Query         string   `json:"query"`
+	File          string   `json:"file"`
+	Repos         []string `json:"repos"`
+	Regex         bool     `json:"regex"`
+	CaseSensitive bool     `json:"caseSensitive"`
+	MaxMatches    int      `json:"maxMatches"`
 }
 
 // SearchQueryResponse describes the top-level reponse for a search query.

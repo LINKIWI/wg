@@ -15,7 +15,7 @@ import (
 
 var (
 	flagWebgrepURL    = flag.String("webgrep-url", "", "base URL of the webgrep instance")
-	flagRegex         = flag.Bool("regex", false, "interpret search query as regular expression")
+	flagRegex         = flag.Bool("regex", false, "interpret search query as a regular expression")
 	flagCaseSensitive = flag.Bool("case-sensitive", false, "respect search query case sensitivity")
 	flagFile          = flag.String("file", "", "filter matches by file path pattern")
 	flagMaxMatches    = flag.Int("max-matches", 50, "maximum number of matches in search results")

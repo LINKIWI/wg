@@ -10,7 +10,7 @@ import (
 
 	"wg/internal/cli"
 	"wg/internal/meta"
-	"wg/internal/webgrep"
+	"wg/pkg/webgrep"
 )
 
 var (

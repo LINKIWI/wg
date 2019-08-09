@@ -3,7 +3,7 @@ package webgrep
 import (
 	"net/http"
 
-	"wg/internal/supercharged"
+	"wg/pkg/supercharged"
 )
 
 // Client is a webgrep API client; effectively, a single layer of abstraction above a Supercharged

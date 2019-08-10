@@ -16,13 +16,18 @@ import (
 	"wg/pkg/webgrep"
 )
 
+const (
+	envWebgrepURL = "WG_WEBGREP_URL"
+	envProxyAddr  = "WG_PROXY_ADDR"
+)
+
 var (
-	flagWebgrepURL    = flag.String("webgrep-url", "", "base URL of the webgrep instance")
+	flagWebgrepURL    = flag.String("webgrep-url", os.Getenv(envWebgrepURL), "base URL of the webgrep instance")
 	flagRegex         = flag.Bool("regex", false, "interpret search query as a regular expression")
 	flagCaseSensitive = flag.Bool("case-sensitive", false, "respect search query case sensitivity")
 	flagFile          = flag.String("file", "", "filter matches by file path pattern")
 	flagMaxMatches    = flag.Int("max-matches", 50, "maximum number of matches in search results")
-	flagProxy         = flag.String("proxy", "", "optional address of a SOCKS5 proxy server")
+	flagProxy         = flag.String("proxy", os.Getenv(envProxyAddr), "optional address of a SOCKS5 proxy server")
 	flagVersion       = flag.Bool("version", false, "print the application version and exit")
 	flagRepos         = cli.NewArrayFlag()
 	flagSearchType    = cli.NewChoicesFlag([]string{"files", "code"}, "code")

@@ -4,9 +4,12 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
 	"strings"
+
+	"golang.org/x/net/proxy"
 
 	"wg/internal/cli"
 	"wg/internal/meta"
@@ -19,6 +22,7 @@ var (
 	flagCaseSensitive = flag.Bool("case-sensitive", false, "respect search query case sensitivity")
 	flagFile          = flag.String("file", "", "filter matches by file path pattern")
 	flagMaxMatches    = flag.Int("max-matches", 50, "maximum number of matches in search results")
+	flagProxy         = flag.String("proxy", "", "optional address of a SOCKS5 proxy server")
 	flagVersion       = flag.Bool("version", false, "print the application version and exit")
 	flagRepos         = cli.NewArrayFlag()
 	flagSearchType    = cli.NewChoicesFlag([]string{"files", "code"}, "code")
@@ -41,8 +45,19 @@ func main() {
 		panic(fmt.Errorf("main: no value specified for webgrep instance URL"))
 	}
 
+	// Optional proxy server configuration
+	var backend *http.Client
+	if *flagProxy != "" {
+		dialer, err := proxy.SOCKS5("tcp", *flagProxy, nil, proxy.Direct)
+		if err != nil {
+			panic(err)
+		}
+
+		backend = &http.Client{Transport: &http.Transport{Dial: dialer.Dial}}
+	}
+
 	// Instantiate a webgrep client
-	client, err := webgrep.NewClient(*flagWebgrepURL)
+	client, err := webgrep.NewClient(*flagWebgrepURL, backend)
 	if err != nil {
 		panic(err)
 	}

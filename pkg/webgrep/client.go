@@ -13,8 +13,8 @@ type Client struct {
 }
 
 // NewClient creates a new webgrep API client for an instance hosted at a particular base URL.
-func NewClient(baseURL string) (*Client, error) {
-	sc, err := supercharged.NewHTTPClient(baseURL, nil)
+func NewClient(baseURL string, backend *http.Client) (*Client, error) {
+	sc, err := supercharged.NewHTTPClient(baseURL, backend)
 	if err != nil {
 		return nil, err
 	}

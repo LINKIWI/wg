@@ -27,6 +27,7 @@ var (
 	flagCaseSensitive = flag.Bool("case-sensitive", false, "respect search query case sensitivity")
 	flagFile          = flag.String("file", "", "filter matches by file path pattern")
 	flagMaxMatches    = flag.Int("max-matches", 50, "maximum number of matches in search results")
+	flagContext       = flag.Int("context", 4, "number of surrounding context lines to include around matches")
 	flagProxy         = flag.String("proxy", os.Getenv(envProxyAddr), "optional address of a SOCKS5 proxy server")
 	flagVersion       = flag.Bool("version", false, "print the application version and exit")
 	flagRepos         = cli.NewArrayFlag()
@@ -82,6 +83,7 @@ func main() {
 		Regex:         *flagRegex,
 		CaseSensitive: *flagCaseSensitive,
 		MaxMatches:    *flagMaxMatches,
+		Context:       *flagContext,
 	})
 	if searchErr != nil {
 		panic(searchErr)

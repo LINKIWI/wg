@@ -34,6 +34,7 @@ type SearchQueryRequest struct {
 	Regex         bool     `json:"regex"`
 	CaseSensitive bool     `json:"caseSensitive"`
 	MaxMatches    int      `json:"maxMatches"`
+	Context       int      `json:"context"`
 }
 
 // SearchQueryResponse describes the top-level reponse for a search query.

@@ -5,6 +5,10 @@ import (
 	"strings"
 )
 
+const (
+	cellPadWidth = 2
+)
+
 // Table represents a console-printed text table.
 type Table struct {
 	grid         [][]string
@@ -53,7 +57,7 @@ func (t *Table) String() string {
 			} else {
 				serializedRow = append(
 					serializedRow,
-					Pad(column, t.columnWidths[idx]+3),
+					Pad(column, t.columnWidths[idx]+cellPadWidth),
 				)
 			}
 		}

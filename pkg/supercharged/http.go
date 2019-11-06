@@ -79,12 +79,20 @@ func (c *HTTPClient) Do(method string, endpoint string, data interface{}, respon
 
 	body, err := ioutil.ReadAll(httpResp.Body)
 	if err != nil {
-		return Wrap(err)
+		return &Error{
+			Status:  httpResp.StatusCode,
+			Code:    CodeClientUndefined,
+			Message: err.Error(),
+		}
 	}
 
 	var scResp Response
 	if err := json.Unmarshal(body, &scResp); err != nil {
-		return Wrap(err)
+		return &Error{
+			Status:  httpResp.StatusCode,
+			Code:    CodeClientUndefined,
+			Message: err.Error(),
+		}
 	}
 
 	if !scResp.Success {
@@ -98,7 +106,11 @@ func (c *HTTPClient) Do(method string, endpoint string, data interface{}, respon
 
 	if response != nil {
 		if err := json.Unmarshal(scResp.Data, response); err != nil {
-			return Wrap(err)
+			return &Error{
+				Status:  httpResp.StatusCode,
+				Code:    CodeClientUndefined,
+				Message: err.Error(),
+			}
 		}
 	}
 

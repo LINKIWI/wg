@@ -3,6 +3,7 @@ package supercharged
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 )
 
 const (
@@ -35,7 +36,7 @@ type Error struct {
 // Wrap wraps an error with default fields to conform to an Error struct.
 func Wrap(err error) *Error {
 	return &Error{
-		Status:  400,
+		Status:  http.StatusBadRequest,
 		Code:    CodeClientUndefined,
 		Message: err.Error(),
 		Data:    nil,

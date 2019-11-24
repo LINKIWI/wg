@@ -54,7 +54,7 @@ type SearchQueryResponse struct {
 // MetadataResponse describes the top-level response for a metadata request.
 type MetadataResponse struct {
 	Name         string `json:"name"`
-	Timestamp    string `json:"timestamp"`
+	Timestamp    int    `json:"timestamp"`
 	Version      string `json:"version"`
 	Repositories []struct {
 		Name    string `json:"name"`

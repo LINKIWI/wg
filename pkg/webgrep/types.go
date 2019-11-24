@@ -37,7 +37,7 @@ type SearchQueryRequest struct {
 	Context       int      `json:"context"`
 }
 
-// SearchQueryResponse describes the top-level reponse for a search query.
+// SearchQueryResponse describes the top-level response for a search query.
 type SearchQueryResponse struct {
 	Stats SearchStats        `json:"stats"`
 	Code  []CodeSearchResult `json:"code"`
@@ -48,6 +48,7 @@ type SearchQueryResponse struct {
 type MetadataResponse struct {
 	Name         string `json:"name"`
 	Timestamp    string `json:"timestamp"`
+	Version      string `json:"version"`
 	Repositories []struct {
 		Name    string `json:"name"`
 		Version string `json:"version"`

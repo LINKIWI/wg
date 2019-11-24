@@ -26,7 +26,7 @@ func NewClient(baseURL string, backend *http.Client) (*Client, error) {
 func (c *Client) Search(request *SearchQueryRequest) (*SearchQueryResponse, *supercharged.Error) {
 	var resp SearchQueryResponse
 
-	if err := c.sc.Do(http.MethodGet, "/api/search", request, &resp); err != nil {
+	if err := c.sc.Do(http.MethodGet, EndpointSearch, request, &resp); err != nil {
 		return nil, err
 	}
 
@@ -37,7 +37,7 @@ func (c *Client) Search(request *SearchQueryRequest) (*SearchQueryResponse, *sup
 func (c *Client) Metadata() (*MetadataResponse, *supercharged.Error) {
 	var resp MetadataResponse
 
-	if err := c.sc.Do(http.MethodGet, "/api/meta/info", nil, &resp); err != nil {
+	if err := c.sc.Do(http.MethodGet, EndpointMetadata, nil, &resp); err != nil {
 		return nil, err
 	}
 

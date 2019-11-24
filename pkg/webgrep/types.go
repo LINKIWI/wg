@@ -1,5 +1,12 @@
 package webgrep
 
+const (
+	// EndpointSearch is the path to the code search query endpoint.
+	EndpointSearch = "/api/search"
+	// EndpointMetadata is the path to the metadata endpoint.
+	EndpointMetadata = "/api/meta/info"
+)
+
 // CodeSearchResult formalizes fields for a single code search result.
 type CodeSearchResult struct {
 	Repo    string `json:"repo"`

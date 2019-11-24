@@ -8,6 +8,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"golang.org/x/net/proxy"
 
@@ -29,7 +30,7 @@ var (
 	flagMaxMatches    = flag.Int("max-matches", 50, "maximum number of matches in search results")
 	flagContext       = flag.Int("context", 4, "number of surrounding context lines to include around matches")
 	flagProxy         = flag.String("proxy", os.Getenv(envProxyAddr), "optional address of a SOCKS5 proxy server")
-	flagVersion       = flag.Bool("version", false, "print the application version and exit")
+	flagAbout         = flag.Bool("about", false, "print current server-side index metadata")
 	flagRepos         = cli.NewArrayFlag()
 	flagSearchType    = cli.NewChoicesFlag([]string{"files", "code"}, "code")
 )
@@ -41,14 +42,9 @@ func init() {
 }
 
 func main() {
-	if *flagVersion {
-		fmt.Printf("wg/%s\n", meta.Version)
-		return
-	}
-
 	// Rudimentary input validation
 	if *flagWebgrepURL == "" {
-		panic(fmt.Errorf("main: no value specified for webgrep instance URL"))
+		panic(fmt.Errorf("main: no value specified for webgrep instance URL (see --help for docs)"))
 	}
 
 	// Optional proxy server configuration
@@ -68,11 +64,44 @@ func main() {
 		panic(err)
 	}
 
+	// Application and index metadata
+	if *flagAbout {
+		if err := about(client); err != nil {
+			panic(err)
+		}
+		return
+	}
+
+	// Code search query
+	if err := search(client); err != nil {
+		panic(err)
+	}
+}
+
+func about(client *webgrep.Client) error {
+	metadata, err := client.Metadata()
+	if err != nil {
+		return err
+	}
+
+	rendered := cli.NewTable()
+	rendered.Add([]string{"wg client version:", meta.Version})
+	rendered.Add([]string{"webgrep server version:", metadata.Version})
+	rendered.Add([]string{"index name:", metadata.Name})
+	rendered.Add([]string{"index timestamp:", time.Unix(int64(metadata.Timestamp), 0).String()})
+	rendered.Add([]string{"index repositories:", strconv.Itoa(len(metadata.Repositories))})
+
+	fmt.Println(rendered)
+
+	return nil
+}
+
+func search(client *webgrep.Client) error {
 	// Read search query as input from stdin
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	// Execute the search, respecting CLI flags as parameters
@@ -86,7 +115,7 @@ func main() {
 		Context:       *flagContext,
 	})
 	if searchErr != nil {
-		panic(searchErr)
+		return searchErr
 	}
 
 	rendered := cli.NewTable()
@@ -116,7 +145,7 @@ func main() {
 				}
 
 				if err := rendered.Add(row); err != nil {
-					panic(err)
+					return err
 				}
 			}
 		}
@@ -136,7 +165,7 @@ func main() {
 			}
 
 			if err := rendered.Add(row); err != nil {
-				panic(err)
+				return err
 			}
 		}
 
@@ -146,4 +175,6 @@ func main() {
 	if !rendered.IsEmpty() {
 		fmt.Println(rendered)
 	}
+
+	return nil
 }

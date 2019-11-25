@@ -84,14 +84,14 @@ func about(client *webgrep.Client) error {
 		return err
 	}
 
-	rendered := cli.NewTable()
-	rendered.Add([]string{"wg client version:", meta.Version})
-	rendered.Add([]string{"webgrep server version:", metadata.Version})
-	rendered.Add([]string{"index name:", metadata.Name})
-	rendered.Add([]string{"index timestamp:", time.Unix(int64(metadata.Timestamp), 0).String()})
-	rendered.Add([]string{"index repositories:", strconv.Itoa(len(metadata.Repositories))})
+	table := cli.NewTable()
+	table.Add([]string{"wg client version:", meta.Version})
+	table.Add([]string{"webgrep server version:", metadata.Version})
+	table.Add([]string{"index name:", metadata.Name})
+	table.Add([]string{"index timestamp:", time.Unix(int64(metadata.Timestamp), 0).String()})
+	table.Add([]string{"index repositories:", strconv.Itoa(len(metadata.Repositories))})
 
-	fmt.Println(rendered)
+	fmt.Println(table)
 
 	return nil
 }
@@ -118,7 +118,7 @@ func search(client *webgrep.Client) error {
 		return searchErr
 	}
 
-	rendered := cli.NewTable()
+	table := cli.NewTable()
 
 	// Format results as requested by parameters
 	switch flagSearchType.Choice() {
@@ -144,7 +144,7 @@ func search(client *webgrep.Client) error {
 					fmt.Sprintf("|%s", source),
 				}
 
-				if err := rendered.Add(row); err != nil {
+				if err := table.Add(row); err != nil {
 					return err
 				}
 			}
@@ -164,7 +164,7 @@ func search(client *webgrep.Client) error {
 				path,
 			}
 
-			if err := rendered.Add(row); err != nil {
+			if err := table.Add(row); err != nil {
 				return err
 			}
 		}
@@ -172,8 +172,8 @@ func search(client *webgrep.Client) error {
 	default:
 	}
 
-	if !rendered.IsEmpty() {
-		fmt.Println(rendered)
+	if !table.IsEmpty() {
+		fmt.Println(table)
 	}
 
 	return nil

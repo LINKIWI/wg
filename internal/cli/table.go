@@ -52,7 +52,7 @@ func (t *Table) String() string {
 		var serializedRow []string
 
 		for idx, column := range row {
-			if idx == len(row)-1 {
+			if idx == len(row)-1 || t.columnWidths[idx] == 0 {
 				serializedRow = append(serializedRow, column)
 			} else {
 				serializedRow = append(

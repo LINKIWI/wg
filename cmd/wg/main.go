@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"time"
@@ -30,12 +31,13 @@ var (
 	flagMaxMatches    = flag.Int("max-matches", 50, "maximum number of matches in search results")
 	flagContext       = flag.Int("context", 4, "number of surrounding context lines to include around matches")
 	flagProxy         = flag.String("proxy", os.Getenv(envProxyAddr), "optional address of a SOCKS5 proxy server")
-	flagAbout         = flag.Bool("about", false, "print current server-side index metadata")
+	flagAbout         = cli.NewChoicesFlag([]string{"index", "repos"}, "")
 	flagRepos         = cli.NewArrayFlag()
 	flagSearchType    = cli.NewChoicesFlag([]string{"files", "code"}, "code")
 )
 
 func init() {
+	flag.Var(flagAbout, "about", "print current server-side index information; one of {index, repos}")
 	flag.Var(flagRepos, "repo", "filter matches by repository name")
 	flag.Var(flagSearchType, "search-type", "search results type to print; one of {files, code}")
 	flag.Parse()
@@ -65,7 +67,7 @@ func main() {
 	}
 
 	// Application and index metadata
-	if *flagAbout {
+	if flagAbout.Choice() != "" {
 		if err := about(client); err != nil {
 			panic(err)
 		}
@@ -79,17 +81,30 @@ func main() {
 }
 
 func about(client *webgrep.Client) error {
+	table := cli.NewTable()
+
 	metadata, err := client.Metadata()
 	if err != nil {
 		return err
 	}
 
-	table := cli.NewTable()
-	table.Add([]string{"wg client version:", meta.Version})
-	table.Add([]string{"webgrep server version:", metadata.Version})
-	table.Add([]string{"index name:", metadata.Name})
-	table.Add([]string{"index timestamp:", time.Unix(int64(metadata.Timestamp), 0).String()})
-	table.Add([]string{"index repositories:", strconv.Itoa(len(metadata.Repositories))})
+	switch flagAbout.Choice() {
+	case "index":
+		table.Add([]string{"wg client version:", meta.Version})
+		table.Add([]string{"webgrep server version:", metadata.Version})
+		table.Add([]string{"index name:", metadata.Name})
+		table.Add([]string{"index timestamp:", time.Unix(int64(metadata.Timestamp), 0).String()})
+		table.Add([]string{"index repositories:", strconv.Itoa(len(metadata.Repositories))})
+	case "repos":
+		sort.SliceStable(metadata.Repositories, func(i, j int) bool {
+			// Sort in descending order of repository name
+			return metadata.Repositories[i].Name < metadata.Repositories[j].Name
+		})
+		for _, repo := range metadata.Repositories {
+			table.Add([]string{repo.Name, repo.Version, repo.Remote})
+		}
+	default:
+	}
 
 	fmt.Println(table)
 

@@ -101,7 +101,12 @@ func about(client *webgrep.Client) error {
 			return metadata.Repositories[i].Name < metadata.Repositories[j].Name
 		})
 		for _, repo := range metadata.Repositories {
-			table.Add([]string{repo.Name, repo.Version, repo.Remote})
+			table.Add([]string{
+				repo.Name,
+				repo.Version,
+				strings.Join(repo.Labels, ","),
+				repo.Remote,
+			})
 		}
 	default:
 	}

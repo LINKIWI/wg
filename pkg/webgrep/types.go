@@ -57,9 +57,10 @@ type MetadataResponse struct {
 	Timestamp    int    `json:"timestamp"`
 	Version      string `json:"version"`
 	Repositories []struct {
-		Name    string `json:"name"`
-		Version string `json:"version"`
-		URL     string `json:"url"`
-		Remote  string `json:"remote"`
+		Name    string   `json:"name"`
+		Version string   `json:"version"`
+		URL     string   `json:"url"`
+		Remote  string   `json:"remote"`
+		Labels  []string `json:"labels"`
 	} `json:"repositories"`
 }

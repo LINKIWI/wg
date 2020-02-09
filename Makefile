@@ -1,8 +1,8 @@
 APP_NAME = wg
 BIN_DIR = bin
 
-GOOS ?= $(shell go tool dist env | grep GOOS | sed 's/"//g' | sed 's/.*=//g')
-GOARCH ?= $(shell go tool dist env | grep GOARCH | sed 's/"//g' | sed 's/.*=//g')
+GOOS ?= $(shell go env GOOS)
+GOARCH ?= $(shell go env GOARCH)
 
 all: $(APP_NAME)
 

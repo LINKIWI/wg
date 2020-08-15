@@ -13,7 +13,9 @@ $(APP_NAME):
 	    cmd/wg/main.go
 
 lint:
-	.ci/lint.sh
+	! gofmt -s -d . | grep "^"
+	go run golang.org/x/lint/golint --set_exit_status ./...
+	go vet ./...
 
 clean:
 	rm -f $(BIN_DIR)/*

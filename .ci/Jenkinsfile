@@ -1,7 +1,7 @@
 pipeline {
     agent {
-        dockerfile {
-            dir '.ci'
+        docker {
+            image 'docker.internal.kevinlin.info/infra/ci-base:0.3.0'
             label 'docker-executor'
         }
     }

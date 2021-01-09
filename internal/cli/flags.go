@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-// ChoicesFlag decribes a flag.Value that only allows one of several candidate choices.
+// ChoicesFlag describes a flag.Value that only allows one of several candidate choices.
 type ChoicesFlag struct {
 	flag.Value
 

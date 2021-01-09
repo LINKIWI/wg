@@ -36,11 +36,38 @@ pipeline {
         }
         stage('Release') {
             steps {
-                sh 'tar -C bin/ -cvzf release.tar.gz ./'
+                sh 'tar -cvzf release.tar.gz bin/'
                 s3Upload(
                     bucket: 'internal',
                     path: "deploy/${env.JOB_NAME}/${env.GIT_COMMIT}/",
                     file: 'release.tar.gz',
+                )
+            }
+        }
+        stage('Publish') {
+            environment {
+                PACKAGE_VERSION = sh(
+                    script: 'git show ' +
+                            '--no-patch ' +
+                            '--no-notes ' +
+                            "--date=format:\"%Y.%m.%d-%H.%M.%S-\$(echo ${GIT_COMMIT} | cut -c -8)\" " +
+                            "--pretty=format:'%cd' ${GIT_COMMIT}",
+                    returnStdout: true,
+                ).trim()
+            }
+            steps {
+                build(
+                    job: 'task--package',
+                    parameters: [
+                        string(name: 'RELEASE_ARTIFACT', value: "${env.JOB_NAME}"),
+                        string(name: 'RELEASE_VERSION', value: "${env.GIT_COMMIT}"),
+                        string(name: 'PACKAGE_NAME', value: "${env.JOB_NAME}"),
+                        string(name: 'PACKAGE_VERSION', value: "${env.PACKAGE_VERSION}"),
+                        string(name: 'PACKAGE_DESCRIPTION', value: 'webgrep CLI client'),
+                        string(name: 'PACKAGE_ARCHITECTURE', value: 'amd64'),
+                        string(name: 'BINARY_SPEC', value: 'wg:bin/wg-linux-amd64'),
+                    ],
+                    wait: true,
                 )
             }
         }
